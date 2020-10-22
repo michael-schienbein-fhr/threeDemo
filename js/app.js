@@ -49,8 +49,9 @@ let createCube = () => {
 		new THREE.MeshLambertMaterial({ map: texture6 }),
 	];
 	let geometry = new THREE.BoxGeometry(20, 20, 20),
-		material = new THREE.MultiMaterial(materials),
-		mesh = new THREE.Mesh(geometry, material);
+		// MultiMaterial removed pass materials array into Mesh instead.
+		// material = new THREE.MultiMaterial(materials),
+		mesh = new THREE.Mesh(geometry, materials);
 	return mesh;
 };
 
