@@ -1,5 +1,5 @@
 let scene = new THREE.Scene();
-
+let group = new THREE.Object3D();
 let degressToRadians = (degrees) => {
 	return degrees * (Math.PI / 180);
 };
@@ -11,9 +11,9 @@ let createCamera = () => {
 		1,
 		1000
 	);
-    camera.position.x = 5;
-    camera.position.y = -5;
-    camera.position.z = 100;
+	camera.position.x = 0;
+	camera.position.y = 0;
+	camera.position.z = 100;
 
 	return camera;
 };
@@ -55,11 +55,14 @@ let createCube = () => {
 	return mesh;
 };
 
+group.add(createCube());
 let draw = (scene, camera, cube) => {
 	window.requestAnimationFrame(() => {
-		cube.rotation.x = cube.rotation.x + 0.007;
-		cube.rotation.y = cube.rotation.y + 0.009;
-		cube.rotation.z = cube.rotation.z + 0.001;
+		// Make rotate:
+		// cube.rotation.x = cube.rotation.x + 0.007;
+		// cube.rotation.y = cube.rotation.y + 0.009;
+		// cube.rotation.z = cube.rotation.z + 0.001;
+		TWEEN.update();
 		renderer.render(scene, camera);
 		draw(scene, camera, cube);
 	});
@@ -69,11 +72,36 @@ let camera = createCamera(),
 	light = createLight(),
 	cube = createCube();
 
+// orientation of cube using degrees to radians conversion:
 // cube.rotation.x = degressToRadians(45);
 // cube.rotation.y = degressToRadians(45);
 
 scene.add(light);
 scene.add(camera);
 scene.add(cube);
+
+function tRotate(obj, angles, delay, pause) {
+	new TWEEN.Tween(group.rotation)
+		.delay(pause)
+		.to(
+			{
+				x: obj.rotation._x + angles.x,
+				y: obj.rotation._y + angles.y,
+				z: obj.rotation._z + angles.z,
+			},
+			delay
+		)
+		.onComplete(function () {
+			setTimeout(tRotate, pause, obj, angles, delay, pause);
+		})
+		.start();
+}
+
+let rollDice = () => {
+	console.log(group);
+};
+
+tRotate(group, { x: 0, y: -Math.PI / 2, z: 0 }, 1000, 500);
+document.addEventListener("click", tRotate);
 
 draw(scene, camera, cube);
